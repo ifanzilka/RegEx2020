@@ -3,7 +3,11 @@ package ru.smak.regex
 import ru.smak.regex.regex.RegexHelper
 import java.awt.Color
 import java.awt.Dimension
+import java.io.BufferedInputStream
+import java.io.File
+import java.io.FileInputStream
 import javax.swing.*
+import javax.swing.filechooser.FileNameExtensionFilter
 import javax.swing.text.BadLocationException
 import javax.swing.text.DefaultHighlighter
 
@@ -11,39 +15,221 @@ class MainWindow : JFrame(){
 
     private val textBlock: JEditorPane
     private val btnFind: JButton
+    private val btnOpenDialog: JButton
+    private val Field :JTextField
+    private  val emailFind:JButton
 
     init{
         defaultCloseOperation = WindowConstants.EXIT_ON_CLOSE
         minimumSize = Dimension(500, 500)
         textBlock = JEditorPane()
         btnFind = JButton()
-        btnFind.text = "Найти число"
-        btnFind.addActionListener { find() }
-        val gl = GroupLayout(contentPane)
+        emailFind=JButton()
+        emailFind.text=("email")
+        btnFind.text = "Найти "
+        btnOpenDialog = JButton()
+        btnOpenDialog.text = "Открыть файл"
+        btnFind.text = "Найти "
+
+        Field = JTextField("", 25)
+        Field.setToolTipText("Длиное поле")
+
+        emailFind.addActionListener{find("([a-z0-9_\\.-]+)@([a-z0-9_\\.-]+)\\.([a-z\\.]{2,6})")}
+        btnFind.addActionListener { find(Field.text) }
+        val scroll = JScrollPane(
+            textBlock,
+            ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+            ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED
+        )
+        btnOpenDialog.addActionListener {
+            val filefilter = FileNameExtensionFilter("txt", "txt")
+            val d = JFileChooser()
+            d.isAcceptAllFileFilterUsed = false
+            d.fileFilter = filefilter
+            d.currentDirectory = File(".")
+            d.dialogTitle = "Выберите файл"
+            d.approveButtonText = "Выбрать"
+            d.addChoosableFileFilter(filefilter)
+            d.fileSelectionMode = JFileChooser.FILES_ONLY
+            val result = d.showOpenDialog(null)
+            if (result == JFileChooser.APPROVE_OPTION) {
+                textBlock.text = ""
+                val fileInputStream = FileInputStream(d.selectedFile)
+                val bufferedInputStream = BufferedInputStream(fileInputStream, 200)
+                var i = bufferedInputStream.read()
+                do {
+                    textBlock.text+=i.toChar()
+                    i = bufferedInputStream.read()
+                } while (i != -1)
+
+
+
+            }
+        }
+
+       /* val gl = GroupLayout(contentPane)
         layout = gl
         gl.setHorizontalGroup(
             gl.createSequentialGroup()
                 .addGap(4)
                 .addGroup(gl.createParallelGroup(GroupLayout.Alignment.CENTER)
                     .addComponent(textBlock, 450, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE)
-                    .addComponent(btnFind, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnFind,
+                        GroupLayout.PREFERRED_SIZE,
+                        GroupLayout.PREFERRED_SIZE,
+                        GroupLayout.PREFERRED_SIZE)
+                    .addComponent(
+                        btnOpenDialog,
+                        GroupLayout.PREFERRED_SIZE,
+                        GroupLayout.PREFERRED_SIZE,
+                        GroupLayout.PREFERRED_SIZE
+                    )
+                    .addComponent(
+                        Field,
+                        GroupLayout.PREFERRED_SIZE,
+                        GroupLayout.PREFERRED_SIZE,
+                        GroupLayout.PREFERRED_SIZE
+                    )
+                )
+                .addGap(4)
+        )*/
+        val gl = GroupLayout(contentPane)
+        layout = gl
+        gl.setHorizontalGroup(
+            gl.createSequentialGroup()
+                .addGap(4)
+                .addGroup(
+                    gl.createParallelGroup(GroupLayout.Alignment.CENTER)
+                        .addGroup(
+                            gl.createSequentialGroup()
+
+                                .addComponent(
+                                    btnOpenDialog,
+                                    GroupLayout.PREFERRED_SIZE,
+                                    GroupLayout.PREFERRED_SIZE,
+                                    GroupLayout.PREFERRED_SIZE
+                                )
+                                .addGap(4)
+
+                        )
+                        .addComponent(scroll, 450, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE)
+                        .addGroup(
+                            gl.createSequentialGroup()
+                                .addComponent(
+                                    Field
+                                )
+                                .addGap(4)
+                                .addComponent(
+                                    btnFind,
+                                    GroupLayout.PREFERRED_SIZE,
+                                    GroupLayout.PREFERRED_SIZE,
+                                    GroupLayout.PREFERRED_SIZE
+                                )
+                                .addComponent(
+                                    emailFind,
+                                    GroupLayout.PREFERRED_SIZE,
+                                    GroupLayout.PREFERRED_SIZE,
+                                    GroupLayout.PREFERRED_SIZE
+                                )
+
+                        )
+                        .addGap(4)
+
                 )
                 .addGap(4)
         )
-        gl.setVerticalGroup(
+
+
+
+
+       /* gl.setVerticalGroup(
             gl.createSequentialGroup()
                 .addGap(4)
                 .addComponent(textBlock, 400, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE)
                 .addGap(4)
+                .addComponent(
+                    btnOpenDialog,
+                    GroupLayout.PREFERRED_SIZE,
+                    GroupLayout.PREFERRED_SIZE,
+                    GroupLayout.PREFERRED_SIZE
+                )
+                .addGap(4)
+                .addComponent(
+                    Field,
+                    GroupLayout.PREFERRED_SIZE,
+                    GroupLayout.PREFERRED_SIZE,
+                    GroupLayout.PREFERRED_SIZE
+                )
+                .addGap(4)
                 .addComponent(btnFind, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
                 .addGap(4)
+        )*/
+
+
+        gl.setVerticalGroup(
+            gl.createSequentialGroup()
+                .addGap(4)
+                .addGroup(
+                    gl.createParallelGroup()
+
+                        .addComponent(
+                            btnOpenDialog,
+                            GroupLayout.PREFERRED_SIZE,
+                            GroupLayout.PREFERRED_SIZE,
+                            GroupLayout.PREFERRED_SIZE
+                        )
+                )
+                .addGap(4)
+                .addComponent(scroll, 400, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE)
+                .addGap(4)
+                .addGap(4)
+                .addGroup(
+                    gl.createParallelGroup()
+                        .addComponent(
+                            Field
+                        )
+                        .addComponent(
+                            btnFind,
+                            GroupLayout.PREFERRED_SIZE,
+                            GroupLayout.PREFERRED_SIZE,
+                            GroupLayout.PREFERRED_SIZE
+                        )
+                        .addComponent(
+                            emailFind,
+                            GroupLayout.PREFERRED_SIZE,
+                            GroupLayout.PREFERRED_SIZE,
+                            GroupLayout.PREFERRED_SIZE
+                        )
+
+                )
+                .addGap(4)
+
+                .addGap(4)
+
         )
+
+
         pack()
     }
 
-    private fun find() {
+
+    private fun find(str:String) {
         val rh = RegexHelper()
-        rh.regex = "[0-9]+"
+
+
+        rh.regex = "([a-z0-9_\\.-]+)@([a-z0-9_\\.-]+)\\.([a-z\\.]{2,6})"
+        //rh.regex = "[0-9]+"
+       /* var regex="\\d{3}" // шаблон строки из трех цифровых символов;
+        if (Field.text.matches() ){
+            rh.regex=""
+
+
+        }*/
+
+        var s =""
+        s=s+"("+ Field.text +")"
+
+        rh.regex=str
         var txt = textBlock.text
         txt = txt.replace("\r", "")
         val result = rh.findIn(txt)
@@ -58,4 +244,5 @@ class MainWindow : JFrame(){
         }
     }
 }
+
 
