@@ -15,7 +15,9 @@ class MainWindow : JFrame(){
 
     private val textBlock: JEditorPane
     private val btnFind: JButton
+    private val btnReplacement: JButton
     private val btnOpenDialog: JButton
+    private val TextReplace :JTextField
     private val Field :JTextField
     private  val emailFind:JButton
 
@@ -23,6 +25,8 @@ class MainWindow : JFrame(){
         defaultCloseOperation = WindowConstants.EXIT_ON_CLOSE
         minimumSize = Dimension(500, 500)
         textBlock = JEditorPane()
+        btnReplacement= JButton()
+        btnReplacement.text=("Заменить")
         btnFind = JButton()
         emailFind=JButton()
         emailFind.text=("email")
@@ -33,6 +37,8 @@ class MainWindow : JFrame(){
 
         Field = JTextField("", 25)
         Field.setToolTipText("Длиное поле")
+
+        TextReplace=JTextField("", 25)
 
         emailFind.addActionListener{find("([a-z0-9_\\.-]+)@([a-z0-9_\\.-]+)\\.([a-z\\.]{2,6})")}
         btnFind.addActionListener { find(Field.text) }
@@ -66,33 +72,13 @@ class MainWindow : JFrame(){
 
             }
         }
+        btnReplacement.addActionListener {
 
-       /* val gl = GroupLayout(contentPane)
-        layout = gl
-        gl.setHorizontalGroup(
-            gl.createSequentialGroup()
-                .addGap(4)
-                .addGroup(gl.createParallelGroup(GroupLayout.Alignment.CENTER)
-                    .addComponent(textBlock, 450, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE)
-                    .addComponent(btnFind,
-                        GroupLayout.PREFERRED_SIZE,
-                        GroupLayout.PREFERRED_SIZE,
-                        GroupLayout.PREFERRED_SIZE)
-                    .addComponent(
-                        btnOpenDialog,
-                        GroupLayout.PREFERRED_SIZE,
-                        GroupLayout.PREFERRED_SIZE,
-                        GroupLayout.PREFERRED_SIZE
-                    )
-                    .addComponent(
-                        Field,
-                        GroupLayout.PREFERRED_SIZE,
-                        GroupLayout.PREFERRED_SIZE,
-                        GroupLayout.PREFERRED_SIZE
-                    )
-                )
-                .addGap(4)
-        )*/
+            textBlock.text=ReplaceText(textBlock.text,Field.text,TextReplace.text)
+
+        }
+
+
         val gl = GroupLayout(contentPane)
         layout = gl
         gl.setHorizontalGroup(
@@ -134,36 +120,28 @@ class MainWindow : JFrame(){
 
                         )
                         .addGap(4)
+                        .addGroup(
+                            gl.createSequentialGroup()
+                                .addComponent(
+                                    TextReplace
+                                )
+                                .addGap(4)
+                                .addComponent(
+                                    btnReplacement,
+                                    GroupLayout.PREFERRED_SIZE,
+                                    GroupLayout.PREFERRED_SIZE,
+                                    GroupLayout.PREFERRED_SIZE
+                                )
+
+
+                        )
+
 
                 )
                 .addGap(4)
         )
 
 
-
-
-       /* gl.setVerticalGroup(
-            gl.createSequentialGroup()
-                .addGap(4)
-                .addComponent(textBlock, 400, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE)
-                .addGap(4)
-                .addComponent(
-                    btnOpenDialog,
-                    GroupLayout.PREFERRED_SIZE,
-                    GroupLayout.PREFERRED_SIZE,
-                    GroupLayout.PREFERRED_SIZE
-                )
-                .addGap(4)
-                .addComponent(
-                    Field,
-                    GroupLayout.PREFERRED_SIZE,
-                    GroupLayout.PREFERRED_SIZE,
-                    GroupLayout.PREFERRED_SIZE
-                )
-                .addGap(4)
-                .addComponent(btnFind, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-                .addGap(4)
-        )*/
 
 
         gl.setVerticalGroup(
@@ -204,6 +182,21 @@ class MainWindow : JFrame(){
                 )
                 .addGap(4)
 
+                .addGroup(
+                    gl.createParallelGroup()
+                        .addComponent(
+                            TextReplace
+                        )
+
+                        .addComponent(
+                           btnReplacement,
+                            GroupLayout.PREFERRED_SIZE,
+                            GroupLayout.PREFERRED_SIZE,
+                            GroupLayout.PREFERRED_SIZE
+                        )
+
+                )
+
                 .addGap(4)
 
         )
@@ -242,6 +235,26 @@ class MainWindow : JFrame(){
                 h.addHighlight(res.first, res.second, hp)
             } catch (e: BadLocationException){}
         }
+    }
+
+
+    private fun ReplaceText(text:String,find:String,Replcae:String):String{
+
+     val rh = RegexHelper()
+
+
+        //rh.regex = "([a-z0-9_\\.-]+)@([a-z0-9_\\.-]+)\\.([a-z\\.]{2,6})"
+        //rh.regex = "[0-9]+"
+        /* var regex="\\d{3}" // шаблон строки из трех цифровых символов;
+         if (Field.text.matches() ){
+             rh.regex=""
+
+
+         }*/
+
+        val news:String=text.replace(find,Replcae)
+
+        return news
     }
 }
 
