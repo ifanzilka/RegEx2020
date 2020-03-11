@@ -20,6 +20,7 @@ class MainWindow : JFrame(){
     private val TextReplace :JTextField
     private val Field :JTextField
     private  val emailFind:JButton
+    private val btnSubstit: JButton
 
     init{
         defaultCloseOperation = WindowConstants.EXIT_ON_CLOSE
@@ -38,6 +39,11 @@ class MainWindow : JFrame(){
         Field = JTextField("", 25)
         Field.setToolTipText("Длиное поле")
 
+        btnSubstit=JButton()
+        btnSubstit.text="Найти и заменить гиперссылки"
+        btnSubstit.addActionListener{
+            changeHyperlink()
+        }
         TextReplace=JTextField("", 25)
 
         emailFind.addActionListener{find("([a-z0-9_\\.-]+)@([a-z0-9_\\.-]+)\\.([a-z\\.]{2,6})")}
@@ -75,6 +81,7 @@ class MainWindow : JFrame(){
         btnReplacement.addActionListener {
 
             textBlock.text=ReplaceText(textBlock.text,Field.text,TextReplace.text)
+
 
         }
 
@@ -128,6 +135,12 @@ class MainWindow : JFrame(){
                                 .addGap(4)
                                 .addComponent(
                                     btnReplacement,
+                                    GroupLayout.PREFERRED_SIZE,
+                                    GroupLayout.PREFERRED_SIZE,
+                                    GroupLayout.PREFERRED_SIZE
+                                )
+                                .addComponent(
+                                    btnSubstit,
                                     GroupLayout.PREFERRED_SIZE,
                                     GroupLayout.PREFERRED_SIZE,
                                     GroupLayout.PREFERRED_SIZE
@@ -194,6 +207,12 @@ class MainWindow : JFrame(){
                             GroupLayout.PREFERRED_SIZE,
                             GroupLayout.PREFERRED_SIZE
                         )
+                        .addComponent(
+                            btnSubstit,
+                            GroupLayout.PREFERRED_SIZE,
+                            GroupLayout.PREFERRED_SIZE,
+                            GroupLayout.PREFERRED_SIZE
+                        )
 
                 )
 
@@ -236,7 +255,38 @@ class MainWindow : JFrame(){
             } catch (e: BadLocationException){}
         }
     }
-
+    private fun changeHyperlink() {
+        val rh = RegexHelper()
+        rh.regex = "(?:https|http)(?:\\:\\/\\/)(?:[^ ]*)"
+        var txt = textBlock.text
+        txt = txt.replace("\r", "")
+        val result = rh.findIn(txt)
+        var changedText = txt
+        for (res in result) {
+            try {
+                var ft = res.first
+                var sd = res.second
+                if (sd - ft > 40) {
+                    var oldSubstr = txt.substring(ft, sd)
+                    var newSubstr = txt.substring(ft, ft + 30) + "***" + txt.substring(sd - 10, sd)
+                    changedText = changedText.replace(oldSubstr, newSubstr)
+                }
+            } catch (e: BadLocationException) {
+            }
+        }
+        textBlock.text = changedText
+        val result2 = rh.findIn(changedText)
+        val h = textBlock.highlighter
+        val hp = DefaultHighlighter
+            .DefaultHighlightPainter(Color.YELLOW)
+        h.removeAllHighlights()
+        for (res in result2) {
+            try {
+                h.addHighlight(res.first, res.second, hp)
+            } catch (e: BadLocationException) {
+            }
+        }
+    }
 
     private fun ReplaceText(text:String,find:String,Replcae:String):String{
 
