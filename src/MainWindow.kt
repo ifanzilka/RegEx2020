@@ -6,6 +6,7 @@ import java.awt.Dimension
 import java.io.BufferedInputStream
 import java.io.File
 import java.io.FileInputStream
+import java.util.regex.Pattern
 import javax.swing.*
 import javax.swing.filechooser.FileNameExtensionFilter
 import javax.swing.text.BadLocationException
@@ -40,7 +41,7 @@ class MainWindow : JFrame(){
         Field.setToolTipText("Длиное поле")
 
         btnSubstit=JButton()
-        btnSubstit.text="Найти и заменить гиперссылки"
+        btnSubstit.text="Замена Ссылок"
         btnSubstit.addActionListener{
             changeHyperlink()
         }
@@ -257,15 +258,36 @@ class MainWindow : JFrame(){
     }
     private fun changeHyperlink() {
         val rh = RegexHelper()
-        rh.regex = "(?:https|http)(?:\\:\\/\\/)(?:[^ ]*)"
+        //rh.regex = "(?:https|http)(?:\\:\\/\\/)(?:[^ ]*)"
+        rh.regex = "(https|http)(\\:\\/\\/)([^\\/]*)([^ ]{15})([^ \\n]*)([^ \\n]{5})"
         var txt = textBlock.text
         txt = txt.replace("\r", "")
         val result = rh.findIn(txt)
         var changedText = txt
+
+
+
+        try {
+            val p=Pattern.compile(rh.regex)
+            val m=p.matcher(txt)
+            val r =m.replaceAll("$1$2$3***$6")
+
+            textBlock.text=r
+        } catch (e: BadLocationException) {
+        }
+
+         /*
         for (res in result) {
             try {
+
                 var ft = res.first
                 var sd = res.second
+
+               /* val p=Pattern.compile(rh.regex)
+                val m=p.matcher(txt)
+                val r =m.replaceAll("-$2")*/
+
+
                 if (sd - ft > 40) {
                     var oldSubstr = txt.substring(ft, sd)
                     var newSubstr = txt.substring(ft, ft + 30) + "***" + txt.substring(sd - 10, sd)
@@ -273,6 +295,10 @@ class MainWindow : JFrame(){
                 }
             } catch (e: BadLocationException) {
             }
+
+
+
+
         }
         textBlock.text = changedText
         val result2 = rh.findIn(changedText)
@@ -286,6 +312,10 @@ class MainWindow : JFrame(){
             } catch (e: BadLocationException) {
             }
         }
+        */
+
+
+
     }
 
     private fun ReplaceText(text:String,find:String,Replcae:String):String{
