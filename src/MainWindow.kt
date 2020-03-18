@@ -259,7 +259,7 @@ class MainWindow : JFrame(){
     private fun changeHyperlink() {
         val rh = RegexHelper()
         //rh.regex = "(?:https|http)(?:\\:\\/\\/)(?:[^ ]*)"
-        rh.regex = "(https|http)(\\:\\/\\/)([^\\/]*)([^ ]{15})([^ \\n]*)([^ \\n]{5})"
+        rh.regex = "(https|http)(\\:\\/\\/)([^\\/]*)([^ \\n\\r]{15})([^ \\n\\r]*)([^ \\n]{5})"
         var txt = textBlock.text
         txt = txt.replace("\r", "")
         val result = rh.findIn(txt)
@@ -270,7 +270,7 @@ class MainWindow : JFrame(){
         try {
             val p=Pattern.compile(rh.regex)
             val m=p.matcher(txt)
-            val r =m.replaceAll("$1$2$3***$6")
+            val r =m.replaceAll("$1$2$3$4***$6")
 
             textBlock.text=r
         } catch (e: BadLocationException) {
