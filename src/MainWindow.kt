@@ -265,7 +265,7 @@ class MainWindow : JFrame(){
         val result = rh.findIn(txt)
         var changedText = txt
 
-
+/*   */
 
         try {
             val p=Pattern.compile(rh.regex)
