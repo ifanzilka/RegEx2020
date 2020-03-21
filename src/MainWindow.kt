@@ -271,9 +271,11 @@ class MainWindow : JFrame(){
             val p=Pattern.compile(rh.regex)
             val m=p.matcher(txt)
             val r =m.replaceAll("$1$2$3$4***$6")
-
             textBlock.text=r
         } catch (e: BadLocationException) {
+
+
+
         }
 
          /*
